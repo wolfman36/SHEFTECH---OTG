@@ -15,7 +15,7 @@ jobs:
 
       - name: Extract SHEFTECH project
         run: |
-          mkdir project
+          mkdir -p project
           unzip -q SHEFTECH_OTG_Prototype.zip -d project
           echo "Project extracted:"
           find project -maxdepth 3 -type f | head -50
@@ -29,12 +29,17 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
       - name: Build APK
         working-directory: project
-        run: chmod +x gradlew && ./gradlew assembleDebug
-          
+        run: gradle assembleDebug
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: SHEFTECH-OTG-APK
-          path: project/app/build/outputs/apk/debug/app-debug.apk
+          path: project/app/build/outputs/apk/debug/*.apk
